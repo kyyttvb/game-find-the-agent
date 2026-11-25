@@ -1,0 +1,3133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CASE FILE #007: FIND THE DOUBLE AGENT</title>
+<link rel="icon" type="image/png" href="favicon.png">
+  <!-- Google Fonts: Typewriter headings, notebook body, digital spy tags -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&family=Special+Elite&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =========================================
+       DESIGN TOKENS & NOIR DETECTIVE THEME
+       ========================================= */
+    :root {
+      --wood-dark: #140e0a;
+      --wood-mid: #231811;
+      --wood-light: #352418;
+      --paper-bg: #f3e8d2;
+      --paper-dark: #e2d1b1;
+      --paper-line: #cbb996;
+      --folder-bg: #d9b882;
+      --folder-dark: #b9935a;
+      --ink-main: #1f1b18;
+      --ink-muted: #52473e;
+      --stamp-red: #b51f1f;
+      --stamp-green: #1e6b3a;
+      --amber-glow: #f5b953;
+      --tech-cyan: #67d4c4;
+      --font-title: 'Special Elite', cursive, monospace;
+      --font-body: 'Courier Prime', monospace;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: var(--wood-dark);
+      color: var(--ink-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Dark wooden detective desk texture */
+    body {
+      background-image:
+        repeating-linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.16) 0px,
+          rgba(0, 0, 0, 0.16) 2px,
+          transparent 2px,
+          transparent 18px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 210, 150, 0.02) 0px,
+          rgba(255, 210, 150, 0.02) 1px,
+          transparent 1px,
+          transparent 7px
+        ),
+        radial-gradient(circle at 20% 15%, #3d2a1c 0%, #1d140e 48%, #0d0907 100%);
+      position: relative;
+      padding-bottom: 52px;
+    }
+
+    /* Noir Desk Lamp Spotlight Overlay — ALWAYS pointer-events: none */
+    .desk-lighting-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background:
+        radial-gradient(
+          ellipse 66% 62% at 16% 14%,
+          rgba(255, 216, 132, 0.17) 0%,
+          rgba(255, 190, 95, 0.06) 38%,
+          rgba(8, 6, 5, 0.44) 76%,
+          rgba(4, 3, 2, 0.72) 100%
+        );
+      transition: background 0.5s ease;
+    }
+
+    body.interrogation-mode .desk-lighting-overlay {
+      background:
+        radial-gradient(
+          ellipse 52% 66% at 50% 18%,
+          rgba(255, 232, 168, 0.14) 0%,
+          rgba(255, 200, 110, 0.04) 40%,
+          rgba(4, 4, 6, 0.76) 75%,
+          rgba(2, 2, 4, 0.92) 100%
+        );
+    }
+
+    /* Visible Vintage Desk Lamp in Top-Left Corner — pointer-events: none */
+    .desk-lamp-prop {
+      position: fixed;
+      top: 52px;
+      left: -8px;
+      width: 152px;
+      height: 152px;
+      pointer-events: none;
+      z-index: 6;
+      opacity: 0.94;
+      filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.75));
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    body.interrogation-mode .desk-lamp-prop {
+      opacity: 0.14;
+      transform: translateX(-20px);
+    }
+
+    @media (max-width: 768px) {
+      .desk-lamp-prop {
+        width: 94px;
+        height: 94px;
+        top: 58px;
+        opacity: 0.65;
+      }
+    }
+
+    /* =========================================
+       TOP UTILITY BAR
+       ========================================= */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 18px;
+      background: linear-gradient(180deg, #1b1511 0%, #110d0a 100%);
+      border-bottom: 2px solid #4a3727;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
+      color: #f3e8d2;
+    }
+
+    .top-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .case-badge {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      letter-spacing: 0.05em;
+      color: var(--amber-glow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .phase-pill {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(245, 185, 83, 0.14);
+      border: 1px solid rgba(245, 185, 83, 0.45);
+      color: #fde4b0;
+    }
+
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .util-btn {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.05em;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid #6b533b;
+      background: #271e17;
+      color: #f4e6cc;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease;
+    }
+
+    .util-btn:hover {
+      background: #3a2b1f;
+      border-color: var(--amber-glow);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .util-btn:active {
+      transform: translateY(0);
+    }
+
+    .util-btn.accent {
+      border-color: rgba(245, 185, 83, 0.55);
+      background: rgba(245, 185, 83, 0.12);
+      color: #ffd98a;
+    }
+
+    /* =========================================
+       MAIN WORKSPACE CONTAINER
+       ========================================= */
+    .workspace {
+      position: relative;
+      z-index: 10;
+      max-width: 1120px;
+      margin: 22px auto 0;
+      padding: 0 16px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeSlideIn 0.35s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =========================================
+       TACTILE BUTTONS
+       ========================================= */
+    .btn {
+      font-family: var(--font-title);
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      padding: 13px 24px;
+      border-radius: 8px;
+      border: 2px solid #2b1d12;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-transform: uppercase;
+      box-shadow: 0 5px 0 #1e130c, 0 8px 18px rgba(0, 0, 0, 0.45);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #1e130c, 0 12px 22px rgba(0, 0, 0, 0.55);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #1e130c, 0 4px 8px rgba(0, 0, 0, 0.45);
+    }
+
+    .btn:disabled {
+      opacity: 0.48;
+      cursor: not-allowed;
+      box-shadow: 0 2px 0 #1e130c;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #d99b38 0%, #b5771d 100%);
+      color: #191008;
+      border-color: #6b420c;
+    }
+
+    .btn-danger {
+      background: linear-gradient(180deg, #c93333 0%, #961a1a 100%);
+      color: #fff6ee;
+      border-color: #5c0f0f;
+    }
+
+    .btn-success {
+      background: linear-gradient(180deg, #2d8a4e 0%, #1c6335 100%);
+      color: #f4fff7;
+      border-color: #0f3d20;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(180deg, #4b3b2d 0%, #33271d 100%);
+      color: #f3e8d2;
+      border-color: #1f1610;
+    }
+
+    .btn-pulse {
+      animation: pulseGlow 1.8s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 5px 0 #1e130c, 0 0 0 0 rgba(245, 185, 83, 0.65); }
+      50% { box-shadow: 0 5px 0 #1e130c, 0 0 0 12px rgba(245, 185, 83, 0); }
+    }
+
+    .btn-arrest-glow {
+      animation: arrestGlow 1.5s infinite;
+    }
+
+    @keyframes arrestGlow {
+      0%, 100% { box-shadow: 0 5px 0 #5c0f0f, 0 0 0 0 rgba(230, 57, 57, 0.75); }
+      50% { box-shadow: 0 5px 0 #5c0f0f, 0 0 0 14px rgba(230, 57, 57, 0); }
+    }
+
+    /* =========================================
+       VOCABULARY HIGHLIGHT & FLOATING TOOLTIP
+       ========================================= */
+    .vocab-word {
+      position: relative;
+      display: inline;
+      font-weight: 700;
+      color: #6c3600;
+      background: rgba(245, 185, 83, 0.24);
+      border-bottom: 2px dashed #b4690e;
+      border-radius: 3px;
+      padding: 0 3px;
+      cursor: help;
+      transition: background 0.15s ease;
+    }
+
+    .vocab-word:hover,
+    .vocab-word:focus {
+      background: rgba(245, 185, 83, 0.5);
+      outline: none;
+    }
+
+    .dark-vocab .vocab-word {
+      color: #ffd685;
+      background: rgba(245, 185, 83, 0.16);
+      border-bottom: 2px dashed #f5b953;
+    }
+
+    #vocab-tooltip {
+      position: fixed;
+      z-index: 9999;
+      max-width: 270px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      background: #1a1410;
+      color: #f6ead4;
+      border: 1.5px solid var(--amber-glow);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.78);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      line-height: 1.38;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    #vocab-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #vocab-tooltip .tt-word {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      color: var(--amber-glow);
+      margin-bottom: 3px;
+      letter-spacing: 0.06em;
+    }
+
+    /* =========================================
+       SCREEN 0: CLASSIFIED CASE FOLDER (MAIN PAGE)
+       ========================================= */
+    .folder-wrapper {
+      max-width: 820px;
+      margin: 12px auto;
+      position: relative;
+    }
+
+    .folder-tab {
+      display: inline-block;
+      background: var(--folder-bg);
+      color: #3a2610;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      padding: 8px 22px 6px;
+      border-radius: 12px 12px 0 0;
+      border: 2px solid #96723e;
+      border-bottom: none;
+      margin-left: 24px;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .case-folder {
+      background: linear-gradient(160deg, #e5c792 0%, #d5b277 65%, #c59d5e 100%);
+      border: 2px solid #8a6635;
+      border-radius: 12px;
+      padding: 28px 30px;
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stamp-classified {
+      position: absolute;
+      top: 22px;
+      right: 24px;
+      font-family: var(--font-title);
+      font-size: 1.25rem;
+      color: rgba(181, 31, 31, 0.85);
+      border: 3px solid rgba(181, 31, 31, 0.85);
+      padding: 5px 14px;
+      border-radius: 6px;
+      transform: rotate(9deg);
+      letter-spacing: 0.12em;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .briefing-sheet {
+      background: var(--paper-bg);
+      border: 1px solid #bda988;
+      border-radius: 6px;
+      padding: 26px 28px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+      position: relative;
+    }
+
+    .briefing-title {
+      font-family: var(--font-title);
+      font-size: clamp(1.5rem, 3.2vw, 2.15rem);
+      color: var(--ink-main);
+      margin-bottom: 6px;
+      line-height: 1.2;
+      padding-right: 120px;
+    }
+
+    .briefing-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--stamp-red);
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+    }
+
+    .story-box {
+      background: #fbf4e6;
+      border-left: 4px solid var(--stamp-red);
+      padding: 14px 18px;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 20px;
+      font-size: 1.03rem;
+      line-height: 1.55;
+    }
+
+    .mission-steps {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .mission-steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid var(--paper-line);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.96rem;
+      line-height: 1.45;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--ink-main);
+      color: var(--amber-glow);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .grammar-reminder {
+      background: #221a14;
+      color: #f3e8d2;
+      border-radius: 8px;
+      padding: 14px 18px;
+      border: 1px solid #6b5239;
+      margin-bottom: 24px;
+      font-size: 0.94rem;
+    }
+
+    .grammar-reminder strong {
+      color: var(--amber-glow);
+      font-family: var(--font-title);
+      letter-spacing: 0.04em;
+    }
+
+    .grammar-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .g-pill {
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      padding: 4px 10px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(245, 185, 83, 0.35);
+      color: #ffe2a8;
+    }
+
+    .center-cta {
+      text-align: center;
+    }
+
+    /* =========================================
+       SCREEN 1: DETECTIVE'S NOTEBOOK (PHASE 1)
+       ========================================= */
+    .notebook-shell {
+      background: #2b1f16;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.75);
+      border: 2px solid #4a3525;
+      position: relative;
+    }
+
+    .notebook-pages {
+      background:
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent 27px,
+          rgba(165, 145, 115, 0.22) 27px,
+          rgba(165, 145, 115, 0.22) 28px
+        ),
+        linear-gradient(90deg, #efe2c6 0%, #f5ebd5 46%, #e4d2b0 50%, #f5ebd5 54%, #efe2c6 100%);
+      border-radius: 8px;
+      padding: 22px 24px 26px;
+      border: 1px solid #bda884;
+      position: relative;
+    }
+
+    .notebook-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 2px dashed #b29b76;
+    }
+
+    .notebook-title-group h2 {
+      font-family: var(--font-title);
+      font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+      color: var(--ink-main);
+    }
+
+    .notebook-title-group p {
+      font-size: 0.92rem;
+      color: var(--ink-muted);
+      margin-top: 3px;
+    }
+
+    .notebook-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .counter-badge {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      background: #221a14;
+      color: #f8e5bf;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #6b5239;
+    }
+
+    .mode-banner {
+      display: none;
+      background: #fff3cd;
+      border: 2px solid #c98a1c;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      color: #4a3005;
+      font-size: 0.95rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mode-banner.visible {
+      display: flex;
+    }
+
+    .feedback-banner {
+      display: none;
+      border-radius: 8px;
+      padding: 13px 16px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      line-height: 1.45;
+      animation: fadeSlideIn 0.25s ease;
+    }
+
+    .feedback-banner.visible {
+      display: block;
+    }
+
+    .feedback-banner.error {
+      background: #fce8e6;
+      border: 2px solid var(--stamp-red);
+      color: #6b1111;
+    }
+
+    .feedback-banner.info {
+      background: #e9f2fb;
+      border: 2px solid #2b6cb0;
+      color: #163a61;
+    }
+
+    .feedback-banner.success {
+      background: #e6f4ea;
+      border: 2px solid var(--stamp-green);
+      color: #134725;
+    }
+
+    /* 10 Agent Grid */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .agents-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .agents-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .agent-card {
+      background: #fbf5e8;
+      border: 2px solid #bfa984;
+      border-radius: 8px;
+      padding: 14px 10px 12px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+      box-shadow: 0 4px 10px rgba(45, 30, 15, 0.14);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Decorative masking tape on top of polaroid card */
+    .agent-card::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      width: 48px;
+      height: 14px;
+      background: rgba(235, 218, 178, 0.82);
+      border: 1px solid rgba(165, 145, 105, 0.45);
+      pointer-events: none;
+    }
+
+    .agent-card:hover {
+      transform: translateY(-3px);
+      border-color: #7d592d;
+      box-shadow: 0 8px 18px rgba(45, 30, 15, 0.22);
+    }
+
+    .agent-card.is-suspect {
+      border-color: var(--stamp-red);
+      background: #fff5f3;
+      box-shadow: 0 0 0 2px rgba(181, 31, 31, 0.25), 0 8px 18px rgba(181, 31, 31, 0.2);
+    }
+
+    /* 3:4 Polaroid Portrait Frame */
+    .portrait-frame {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      max-width: 148px;
+      background: #1d1814;
+      border: 4px solid #fbf6ec;
+      outline: 1.5px solid #8a7558;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 9px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+    }
+
+    .portrait-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
+      display: block;
+      transition: transform 0.25s ease;
+    }
+
+    .agent-card:hover .portrait-frame img,
+    .evidence-card:hover:not(.eliminated) .portrait-frame img {
+      transform: scale(1.04);
+    }
+
+    .portrait-zoomable {
+      cursor: zoom-in;
+    }
+
+    .zoom-hint {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-muted);
+      text-align: center;
+      margin-top: -4px;
+      margin-bottom: 6px;
+    }
+
+    .photo-zoom-box {
+      max-width: 520px;
+      background: #1b1612;
+      color: #f3e8d2;
+      border-color: var(--amber-glow);
+      text-align: center;
+    }
+
+    .photo-zoom-img {
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 6px;
+      border: 4px solid #f3e8d2;
+      background: #120f0c;
+    }
+
+    .agent-name {
+      font-family: var(--font-title);
+      font-size: 1rem;
+      color: var(--ink-main);
+      margin-bottom: 2px;
+    }
+
+    .agent-role-mini {
+      font-size: 0.76rem;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+
+    .read-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #e0cfa9;
+      color: #5b4728;
+      border: 1px solid #bfa475;
+    }
+
+    .read-badge.read {
+      background: #d7ebd9;
+      color: #19572f;
+      border-color: #7cb68a;
+    }
+
+    /* Red SUSPECT Stamp */
+    .suspect-stamp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-14deg) scale(0.6);
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      letter-spacing: 0.1em;
+      color: var(--stamp-red);
+      border: 3px solid var(--stamp-red);
+      background: rgba(255, 245, 243, 0.9);
+      padding: 3px 10px;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.18s cubic-bezier(0.22, 1.3, 0.36, 1);
+      z-index: 4;
+    }
+
+    .agent-card.is-suspect .suspect-stamp {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotate(-14deg) scale(1);
+    }
+
+    .peek-dossier-btn {
+      display: none;
+      margin-top: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid #8a7254;
+      background: #efe3cb;
+      color: #3a2b1c;
+      cursor: pointer;
+    }
+
+    .peek-dossier-btn:hover {
+      background: #e2cfa9;
+    }
+
+    .select-mode-active .peek-dossier-btn {
+      display: inline-block;
+    }
+
+    .notebook-footer {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 2px dashed #b29b76;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    /* =========================================
+       SCREEN 2: INTERROGATION ROOM (PHASE 2)
+       ========================================= */
+    .interrogation-room {
+      position: relative;
+      background: radial-gradient(ellipse at 50% 0%, #2a241d 0%, #151210 55%, #0c0a09 100%);
+      border: 2px solid #3c3127;
+      border-radius: 14px;
+      padding: 18px 22px 26px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      color: #f3e8d2;
+      overflow: hidden;
+    }
+
+    /* Hanging Swinging Interrogation Lamp + Spotlight Cone — pointer-events: none */
+    .lamp-rig {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: -18px;
+      margin-bottom: 10px;
+      position: relative;
+      pointer-events: none;
+      transform-origin: top center;
+      animation: lampSway 5.5s ease-in-out infinite;
+    }
+
+    @keyframes lampSway {
+      0%, 100% { transform: rotate(-1.6deg); }
+      50% { transform: rotate(1.6deg); }
+    }
+
+    .lamp-cone {
+      position: absolute;
+      top: 56px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(760px, 96vw);
+      height: 430px;
+      background: linear-gradient(180deg, rgba(255, 224, 150, 0.22) 0%, rgba(255, 200, 100, 0.06) 55%, transparent 100%);
+      clip-path: polygon(43% 0%, 57% 0%, 100% 100%, 0% 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .interrogation-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 14px;
+    }
+
+    .interrogation-title {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+      color: var(--amber-glow);
+    }
+
+    .suspect-progress {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      padding: 5px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(245, 185, 83, 0.4);
+      color: #ffe3ab;
+    }
+
+    /* Compact Dossier Comparison Card */
+    .compact-dossier {
+      position: relative;
+      z-index: 2;
+      background: var(--paper-bg);
+      color: var(--ink-main);
+      border: 2px solid #a98e64;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
+    }
+
+    .compact-dossier .portrait-frame {
+      margin-bottom: 0;
+      max-width: 112px;
+    }
+
+    @media (max-width: 600px) {
+      .compact-dossier {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .compact-dossier .portrait-frame {
+        margin: 0 auto;
+      }
+    }
+
+    .compact-dossier-info h3 {
+      font-family: var(--font-title);
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+
+    .dossier-meta-line {
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+      line-height: 1.4;
+    }
+
+    .dossier-meta-line strong {
+      color: #5e3914;
+    }
+
+    .verdict-stamp {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-family: var(--font-title);
+      font-size: 1.3rem;
+      letter-spacing: 0.1em;
+      padding: 5px 14px;
+      border-radius: 6px;
+      transform: rotate(-8deg) scale(0.7);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.22, 1.3, 0.36, 1);
+    }
+
+    .verdict-stamp.show {
+      opacity: 1;
+      transform: rotate(-8deg) scale(1);
+    }
+
+    .verdict-stamp.cleared {
+      color: var(--stamp-green);
+      border: 3px solid var(--stamp-green);
+      background: rgba(230, 244, 234, 0.94);
+    }
+
+    .verdict-stamp.liar {
+      color: var(--stamp-red);
+      border: 3px solid var(--stamp-red);
+      background: rgba(252, 232, 230, 0.94);
+    }
+
+    /* Speech Box with Giant Quotation Marks */
+    .speech-panel {
+      position: relative;
+      z-index: 2;
+      background: rgba(20, 17, 15, 0.92);
+      border: 2px solid #594736;
+      border-radius: 12px;
+      padding: 26px 34px 22px;
+      min-height: 155px;
+      margin-bottom: 18px;
+      box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.65);
+      cursor: pointer;
+    }
+
+    .quote-mark {
+      font-family: Georgia, serif;
+      font-size: 3.4rem;
+      line-height: 1;
+      color: rgba(245, 185, 83, 0.42);
+      position: absolute;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .quote-mark.open {
+      top: 8px;
+      left: 12px;
+    }
+
+    .quote-mark.close {
+      bottom: -4px;
+      right: 14px;
+    }
+
+    .speech-text {
+      font-family: var(--font-body);
+      font-size: 1.12rem;
+      line-height: 1.65;
+      color: #f8efe0;
+      padding: 0 12px;
+      min-height: 82px;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 9px;
+      height: 1.1em;
+      background: var(--amber-glow);
+      vertical-align: text-bottom;
+      margin-left: 3px;
+      animation: blink 0.75s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    .speech-tools {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .skip-type-btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      background: transparent;
+      border: 1px solid #6b5642;
+      color: #d8c4a6;
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .skip-type-btn:hover {
+      border-color: var(--amber-glow);
+      color: #fff;
+    }
+
+    .interrogation-controls {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .interrogation-feedback {
+      position: relative;
+      z-index: 2;
+      margin-top: 16px;
+      display: none;
+      border-radius: 10px;
+      padding: 15px 18px;
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    .interrogation-feedback.visible {
+      display: block;
+      animation: fadeSlideIn 0.25s ease;
+    }
+
+    .interrogation-feedback.correct {
+      background: rgba(30, 107, 58, 0.24);
+      border: 2px solid #3fa362;
+      color: #e6ffed;
+    }
+
+    .interrogation-feedback.wrong {
+      background: rgba(181, 31, 31, 0.26);
+      border: 2px solid #e05252;
+      color: #ffe8e8;
+    }
+
+    .shake {
+      animation: shakeAnim 0.36s ease;
+    }
+
+    @keyframes shakeAnim {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    /* =========================================
+       SCREEN 3: FINAL DEDUCTION (PHASE 3)
+       ========================================= */
+    .clue-board {
+      background: #221a14;
+      color: #f6ead4;
+      border: 2px solid #6b5239;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+    }
+
+    .clue-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .clue-header h2 {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+      color: var(--amber-glow);
+    }
+
+    .clue-step-pill {
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      background: rgba(245, 185, 83, 0.16);
+      border: 1px solid rgba(245, 185, 83, 0.45);
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: #ffe2a8;
+    }
+
+    .active-clue-box {
+      background: #14100d;
+      border: 1.5px dashed var(--amber-glow);
+      border-radius: 8px;
+      padding: 15px 18px;
+      font-size: 1.05rem;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .clue-instruction {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      color: var(--tech-cyan);
+      margin-top: 8px;
+    }
+
+    .revealed-clues-history {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .history-clue-item {
+      font-size: 0.88rem;
+      color: #cbbba0;
+      padding: 6px 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 5px;
+      border-left: 3px solid #8a6d43;
+    }
+
+    .arrest-bar {
+      display: none;
+      margin-top: 14px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      background: rgba(181, 31, 31, 0.24);
+      border: 2px solid #e05252;
+      text-align: center;
+      animation: fadeSlideIn 0.3s ease;
+    }
+
+    .arrest-bar.visible {
+      display: block;
+    }
+
+    /* 4 Final Suspect Evidence Cards */
+    .final-suspects-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .final-suspects-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      .final-suspects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .evidence-card {
+      background: var(--paper-bg);
+      border: 2px solid #a8916b;
+      border-radius: 10px;
+      padding: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.25s ease;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .evidence-card:hover:not(.eliminated) {
+      transform: translateY(-4px);
+      border-color: var(--amber-glow);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5);
+    }
+
+    .evidence-card.eliminated {
+      opacity: 0.5;
+      filter: grayscale(0.6);
+      cursor: default;
+    }
+
+    .trait-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: 100%;
+      margin-top: 8px;
+      text-align: left;
+    }
+
+    .trait-chip {
+      font-size: 0.82rem;
+      background: #ebe0c7;
+      border: 1px solid #cab58f;
+      border-radius: 5px;
+      padding: 4px 8px;
+      color: #2b221a;
+    }
+
+    .trait-chip strong {
+      color: #5c3a14;
+    }
+
+    .eliminated-stamp {
+      position: absolute;
+      top: 44%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-14deg) scale(0.7);
+      font-family: var(--font-title);
+      font-size: 1.25rem;
+      letter-spacing: 0.1em;
+      color: var(--stamp-red);
+      border: 4px solid var(--stamp-red);
+      background: rgba(255, 242, 240, 0.92);
+      padding: 5px 12px;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.22s cubic-bezier(0.22, 1.3, 0.36, 1);
+      z-index: 5;
+    }
+
+    .evidence-card.eliminated .eliminated-stamp {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotate(-14deg) scale(1);
+    }
+
+    /* =========================================
+       SCREEN 4: CASE CLOSED (VICTORY)
+       ========================================= */
+    .victory-card {
+      max-width: 820px;
+      margin: 10px auto;
+      background: var(--paper-bg);
+      border: 3px solid #8a6a3b;
+      border-radius: 12px;
+      padding: 28px 30px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.78);
+      text-align: center;
+      position: relative;
+    }
+
+    .case-closed-stamp {
+      display: inline-block;
+      font-family: var(--font-title);
+      font-size: 1.65rem;
+      letter-spacing: 0.12em;
+      color: var(--stamp-green);
+      border: 4px solid var(--stamp-green);
+      padding: 6px 20px;
+      border-radius: 8px;
+      transform: rotate(-3deg);
+      margin-bottom: 16px;
+    }
+
+    .arrested-showcase {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 12px auto 20px;
+      position: relative;
+      width: 210px;
+    }
+
+    .arrested-showcase .portrait-frame {
+      max-width: 195px;
+      border: 5px solid #fbf6ec;
+      outline: 3px solid var(--stamp-red);
+    }
+
+    .arrested-overlay-stamp {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      line-height: 1.2;
+      color: var(--stamp-red);
+      border: 3px solid var(--stamp-red);
+      background: rgba(255, 244, 242, 0.94);
+      padding: 6px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .deduction-summary {
+      text-align: left;
+      background: #fbf4e6;
+      border: 1.5px solid #c9b28d;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+
+    .deduction-summary h3 {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      color: var(--ink-main);
+    }
+
+    .deduction-summary ul {
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .deduction-summary li::before {
+      content: "✔ ";
+      color: var(--stamp-green);
+      font-weight: 700;
+    }
+
+    /* =========================================
+       MODALS (DOSSIER, PHOTO ZOOM, VOCAB, GRAMMAR)
+       ========================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 6, 5, 0.78);
+      backdrop-filter: blur(3px);
+      z-index: 80;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeSlideIn 0.2s ease;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 620px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--paper-bg);
+      color: var(--ink-main);
+      border: 3px solid #785b35;
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 2px dashed #b29b76;
+    }
+
+    .modal-header h3 {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+    }
+
+    .modal-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #6e5332;
+      background: #e6d5b4;
+      color: var(--ink-main);
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      background: #d9c091;
+    }
+
+    .dossier-modal-body {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 560px) {
+      .dossier-modal-body {
+        grid-template-columns: 1fr;
+      }
+      .dossier-modal-body .portrait-frame {
+        margin: 0 auto 8px;
+      }
+    }
+
+    .dossier-field {
+      margin-bottom: 10px;
+      font-size: 0.96rem;
+      line-height: 1.48;
+    }
+
+    .dossier-field-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b4b23;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .alibi-highlight {
+      background: #fff8eb;
+      border-left: 4px solid #b5771d;
+      padding: 10px 12px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 8px;
+    }
+
+    .vocab-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .vocab-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .vocab-item {
+      background: #fbf4e6;
+      border: 1px solid #cbb690;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .vocab-item strong {
+      display: block;
+      font-family: var(--font-mono);
+      color: #8c4a08;
+      text-transform: uppercase;
+      font-size: 0.86rem;
+      margin-bottom: 3px;
+    }
+
+    .vocab-item .vocab-ex {
+      display: block;
+      margin-top: 5px;
+      font-style: italic;
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+    }
+
+    .grammar-card {
+      background: #fbf4e6;
+      border: 1.5px solid #cbb690;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .grammar-card h4 {
+      font-family: var(--font-title);
+      font-size: 1.08rem;
+      margin-bottom: 4px;
+    }
+
+    .grammar-card.must h4 { color: var(--stamp-green); }
+    .grammar-card.might h4 { color: #a36200; }
+    .grammar-card.cant h4 { color: var(--stamp-red); }
+
+    .grammar-example {
+      font-style: italic;
+      color: #463a2f;
+      margin-top: 5px;
+      font-size: 0.92rem;
+    }
+
+    /* =========================================
+       HANDCUFFS FULL-SCREEN TRANSITION
+       ========================================= */
+    #handcuff-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(9, 7, 6, 0.96);
+      display: none;
+      pointer-events: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #handcuff-transition.active {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .cuff-stage {
+      position: relative;
+      width: 320px;
+      height: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cuff-half {
+      position: absolute;
+      top: 50%;
+      width: 155px;
+      height: 140px;
+      transition: transform 0.38s cubic-bezier(0.22, 1.25, 0.36, 1);
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.85));
+    }
+
+    .cuff-left {
+      left: 10px;
+      transform: translate(-150px, -50%) rotate(-24deg);
+    }
+
+    .cuff-right {
+      right: 10px;
+      transform: translate(150px, -50%) rotate(24deg);
+    }
+
+    #handcuff-transition.snap .cuff-left {
+      transform: translate(18px, -50%) rotate(-4deg);
+    }
+
+    #handcuff-transition.snap .cuff-right {
+      transform: translate(-18px, -50%) rotate(4deg);
+    }
+
+    .top-secret-flash {
+      margin-top: 16px;
+      font-family: var(--font-title);
+      font-size: 1.7rem;
+      letter-spacing: 0.18em;
+      color: #e63939;
+      border: 4px solid #e63939;
+      padding: 8px 24px;
+      border-radius: 6px;
+      opacity: 0;
+      transform: scale(1.35);
+      transition: all 0.22s ease;
+      text-shadow: 0 0 18px rgba(230, 57, 57, 0.5);
+    }
+
+    #handcuff-transition.snap .top-secret-flash {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .transition-subtext {
+      margin-top: 12px;
+      font-family: var(--font-mono);
+      color: var(--amber-glow);
+      letter-spacing: 0.12em;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Noir Spotlight Lighting Overlay (pointer-events: none) -->
+  <div class="desk-lighting-overlay" aria-hidden="true"></div>
+
+  <!-- Visible Vintage Desk Lamp Prop in Top-Left Corner (pointer-events: none) -->
+  <svg class="desk-lamp-prop" viewBox="0 0 160 160" aria-hidden="true">
+    <defs>
+      <radialGradient id="bulbGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff8d6" stop-opacity="1" />
+        <stop offset="55%" stop-color="#f5b953" stop-opacity="0.7" />
+        <stop offset="100%" stop-color="#f5b953" stop-opacity="0" />
+      </radialGradient>
+      <linearGradient id="brassShade" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#3a4c3e" />
+        <stop offset="50%" stop-color="#1f2c22" />
+        <stop offset="100%" stop-color="#111813" />
+      </linearGradient>
+    </defs>
+    <path d="M -10 10 L 38 42 L 58 62" stroke="#8a6c3c" stroke-width="8" stroke-linecap="round" fill="none" />
+    <circle cx="38" cy="42" r="7" fill="#c79e54" stroke="#4a371a" stroke-width="2" />
+    <circle cx="88" cy="86" r="46" fill="url(#bulbGlow)" />
+    <circle cx="82" cy="80" r="11" fill="#fff7d1" />
+    <path d="M 48 56 Q 68 38 106 58 L 96 78 Q 66 96 42 74 Z" fill="url(#brassShade)" stroke="#b8924d" stroke-width="3" />
+  </svg>
+
+  <!-- TOP UTILITY BAR -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <div class="case-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="20" y1="20" x2="16.2" y2="16.2" />
+        </svg>
+        CASE FILE #007
+      </div>
+      <span id="phase-indicator" class="phase-pill">Briefing</span>
+    </div>
+
+    <div class="top-bar-actions">
+      <button class="util-btn accent" id="btn-open-vocab" type="button">
+        <span>📖</span> VOCABULARY (12)
+      </button>
+      <button class="util-btn accent" id="btn-open-grammar" type="button">
+        <span>💡</span> GRAMMAR TIP
+      </button>
+      <button class="util-btn" id="btn-toggle-sound" type="button" aria-pressed="true">
+        <span id="sound-icon">🔊</span> <span id="sound-label">SOUND ON</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="workspace">
+
+    <!-- =====================================
+         STAGE 0: INTRO BRIEFING (MAIN PAGE)
+         ===================================== -->
+    <section id="screen-intro" class="screen active">
+      <div class="folder-wrapper">
+        <div class="folder-tab">TOP SECRET // HQ-007</div>
+        <div class="case-folder">
+          <div class="stamp-classified">CLASSIFIED</div>
+          <div class="briefing-sheet">
+            <h1 class="briefing-title">FIND THE DOUBLE AGENT</h1>
+            <div class="briefing-subtitle">INCIDENT REPORT • 22:00 LAST NIGHT • AGENCY HQ</div>
+
+            <div class="story-box" id="intro-story"></div>
+
+            <ul class="mission-steps" id="intro-steps"></ul>
+
+            <div class="grammar-reminder">
+              <strong>SPEAK LIKE A DETECTIVE!</strong> Use modals of deduction to explain your choices:
+              <div class="grammar-pills">
+                <span class="g-pill">It CAN'T be... (99% impossible)</span>
+                <span class="g-pill">It MIGHT / COULD be... (50% possible)</span>
+                <span class="g-pill">It MUST be... (99% sure!)</span>
+              </div>
+            </div>
+
+            <div class="center-cta">
+              <button id="btn-start-game" class="btn btn-primary btn-pulse" type="button">
+                <span>🔍</span> START INVESTIGATION
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         STAGE 1: DETECTIVE'S NOTEBOOK
+         ===================================== -->
+    <section id="screen-phase1" class="screen">
+      <div class="notebook-shell">
+        <div class="notebook-pages" id="notebook-pages">
+          <div class="notebook-header">
+            <div class="notebook-title-group">
+              <h2>PHASE 1: DETECTIVE'S NOTEBOOK</h2>
+              <p id="phase1-subtitle">Click each agent's photo to read their dossier and 22:00 alibi.</p>
+            </div>
+            <div class="notebook-stats">
+              <span class="counter-badge" id="read-counter">Dossiers Read: 0 / 10</span>
+              <span class="counter-badge" id="suspect-counter" style="display:none;">Suspects: 0 / 6</span>
+            </div>
+          </div>
+
+          <!-- Selection Mode Banner -->
+          <div id="select-mode-banner" class="mode-banner">
+            <div>
+              <strong>SUSPECT SELECTION MODE:</strong> Click on the <strong>6 agents</strong> with a weak or unverified alibi. (Agents with verified proof CAN'T be the thief!)
+            </div>
+            <button id="btn-phase1-hint" class="util-btn" type="button" style="background:#3a2b1c;">💡 NEED A HINT?</button>
+          </div>
+
+          <!-- Modals of Deduction Feedback Banner -->
+          <div id="phase1-feedback" class="feedback-banner"></div>
+
+          <!-- 10 Agent Portrait Cards -->
+          <div id="agents-grid" class="agents-grid"></div>
+
+          <!-- Phase 1 Footer Actions -->
+          <div class="notebook-footer">
+            <button id="btn-toggle-select-mode" class="btn btn-primary" type="button">
+              <span>📌</span> SELECT SUSPECTS
+            </button>
+            <button id="btn-confirm-suspects" class="btn btn-danger" type="button" style="display:none;">
+              <span>🔦</span> PROCEED TO INTERROGATION (0/6 Selected)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         STAGE 2: INTERROGATION ROOM
+         ===================================== -->
+    <section id="screen-phase2" class="screen">
+      <div class="interrogation-room">
+        <!-- Overhead Swinging Interrogation Lamp -->
+        <div class="lamp-rig" aria-hidden="true">
+          <svg width="160" height="72" viewBox="0 0 160 72">
+            <line x1="80" y1="0" x2="80" y2="26" stroke="#6a6a6a" stroke-width="4" />
+            <path d="M 42 54 Q 80 18 118 54 Z" fill="#2c2e30" stroke="#7d8285" stroke-width="2.5" />
+            <ellipse cx="80" cy="54" rx="38" ry="8" fill="#ffe7a3" />
+            <ellipse cx="80" cy="54" rx="22" ry="5" fill="#ffffff" />
+          </svg>
+          <div class="lamp-cone"></div>
+        </div>
+
+        <div class="interrogation-top-row">
+          <div class="interrogation-title">PHASE 2: THE LIE DETECTOR</div>
+          <div class="suspect-progress" id="interrogation-progress">Suspect 1 of 6</div>
+        </div>
+
+        <!-- Top Panel: Compact Suspect Dossier for Side-by-Side Comparison -->
+        <div class="compact-dossier" id="compact-dossier">
+          <div class="portrait-frame" id="interrogation-portrait"></div>
+          <div class="compact-dossier-info">
+            <h3 id="interrogation-name">Agent Name</h3>
+            <div class="dossier-meta-line"><strong>Role:</strong> <span id="interrogation-role"></span></div>
+            <div class="dossier-meta-line"><strong>Appearance:</strong> <span id="interrogation-traits"></span></div>
+            <div class="dossier-meta-line"><strong>Original 22:00 Alibi:</strong> <span id="interrogation-alibi"></span></div>
+          </div>
+          <div id="verdict-stamp" class="verdict-stamp">LIAR!</div>
+        </div>
+
+        <!-- Middle Panel: Spoken Monologue in Quotation Marks -->
+        <div class="speech-panel dark-vocab" id="speech-panel" title="Click to finish typing">
+          <span class="quote-mark open">“</span>
+          <div class="speech-text" id="speech-text"></div>
+          <span class="quote-mark close">”</span>
+          <div class="speech-tools">
+            <button id="btn-skip-typing" class="skip-type-btn" type="button">SKIP TYPING ⏭</button>
+          </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="interrogation-controls" id="interrogation-buttons">
+          <button id="btn-truth" class="btn btn-success" type="button" disabled>
+            <span>✅</span> TRUTH (CLEAR SUSPECT)
+          </button>
+          <button id="btn-lie" class="btn btn-danger" type="button" disabled>
+            <span>🚨</span> BEEP! LIE DETECTED!
+          </button>
+        </div>
+
+        <!-- Feedback & Next Suspect Button -->
+        <div id="interrogation-feedback" class="interrogation-feedback dark-vocab"></div>
+        <div class="center-cta" style="margin-top: 16px;">
+          <button id="btn-next-suspect" class="btn btn-primary" type="button" style="display:none;">
+            NEXT SUSPECT ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         STAGE 3: FINAL DEDUCTION
+         ===================================== -->
+    <section id="screen-phase3" class="screen">
+      <div class="clue-board dark-vocab">
+        <div class="clue-header">
+          <h2>PHASE 3: FINAL DEDUCTION</h2>
+          <span class="clue-step-pill" id="clue-step-pill">4 Suspects Remaining</span>
+        </div>
+
+        <div id="revealed-clues-history" class="revealed-clues-history"></div>
+
+        <div id="active-clue-box" class="active-clue-box"></div>
+
+        <div id="phase3-feedback" class="feedback-banner" style="margin-bottom: 12px;"></div>
+
+        <div>
+          <button id="btn-reveal-clue" class="btn btn-primary btn-pulse" type="button" style="display:none;">
+            <span>🔎</span> REVEAL NEXT CLUE
+          </button>
+        </div>
+
+        <div id="phase3-arrest-bar" class="arrest-bar">
+          <p style="margin-bottom: 12px; font-size: 1.02rem;">
+            Only <strong>Agent Viper</strong> matches every clue: blonde hair, black glasses, and a wrist tattoo!
+          </p>
+          <button id="btn-arrest-viper" class="btn btn-danger btn-arrest-glow" type="button">
+            <span>⛓️</span> ARREST AGENT VIPER
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 Lying Suspects Grid -->
+      <div id="final-suspects-grid" class="final-suspects-grid"></div>
+    </section>
+
+    <!-- =====================================
+         STAGE 4: VICTORY SCREEN
+         ===================================== -->
+    <section id="screen-victory" class="screen">
+      <div class="victory-card">
+        <div class="case-closed-stamp">CASE CLOSED!</div>
+        <h2 style="font-family: var(--font-title); font-size: 1.7rem; margin-bottom: 6px;">
+          EXCELLENT WORK, DETECTIVE!
+        </h2>
+        <p style="color: var(--ink-muted); margin-bottom: 14px;">
+          You caught the double agent and recovered the classified files!
+        </p>
+
+        <div class="arrested-showcase">
+          <div class="portrait-frame" id="victory-portrait"></div>
+          <div class="arrested-overlay-stamp">ARRESTED —<br />DOUBLE AGENT</div>
+        </div>
+
+        <div class="deduction-summary">
+          <h3>CASE DEDUCTION SUMMARY:</h3>
+          <ul>
+            <li>It <strong>can't</strong> be Agent Rex, Agent Frost, Agent Nova, or Agent Ivy — they all had verified <span class="vocab-word" tabindex="0" data-word="alibi" data-def="Proof that a person was somewhere else when a crime happened.">alibis</span>.</li>
+            <li>It <strong>can't</strong> be Agent Maya or Agent Leo — when we <span class="vocab-word" tabindex="0" data-word="to interrogate" data-def="To ask a suspect tough questions to find out the truth.">interrogated</span> them, their stories matched their alibis.</li>
+            <li>After the lie detector, it <strong>might</strong> have been Shadow, Raven, Hawk, or Viper — they all slipped up!</li>
+            <li>It <strong>can't</strong> be Agent Raven (black hair), Agent Hawk (no glasses), or Agent Shadow (no tattoo).</li>
+            <li>It <strong>MUST</strong> be <strong>Agent Viper</strong> — blonde hair, black glasses, rose tattoo on her wrist, and she knew the 15th-floor <span class="vocab-word" tabindex="0" data-word="surveillance" data-def="Watching a place or person closely using cameras or spies.">surveillance</span> cameras were broken!</li>
+          </ul>
+        </div>
+
+        <button id="btn-play-again" class="btn btn-primary" type="button">
+          <span>🔄</span> PLAY AGAIN
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================
+       MODAL: AGENT DOSSIER
+       ===================================== -->
+  <div id="modal-dossier" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="dossier-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="dossier-modal-title">AGENT DOSSIER</h3>
+        <button class="modal-close" data-close-modal="modal-dossier" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="dossier-modal-body">
+        <div>
+          <div class="portrait-frame portrait-zoomable" id="dossier-modal-portrait" style="max-width:175px;" title="Click to enlarge photo"></div>
+          <div class="zoom-hint">🔍 Click photo to enlarge</div>
+        </div>
+        <div>
+          <div class="dossier-field">
+            <span class="dossier-field-label">Role</span>
+            <span id="dossier-modal-role"></span>
+          </div>
+          <div class="dossier-field">
+            <span class="dossier-field-label">Appearance &amp; Notes</span>
+            <span id="dossier-modal-traits"></span>
+          </div>
+          <div class="dossier-field alibi-highlight">
+            <span class="dossier-field-label">22:00 Alibi Timeline</span>
+            <span id="dossier-modal-alibi"></span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:right; margin-top:16px;">
+        <button class="btn btn-secondary" data-close-modal="modal-dossier" type="button" style="padding:9px 18px; font-size:0.9rem;">
+          CLOSE DOSSIER
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       MODAL: PHOTO ZOOM INSPECTOR
+       ===================================== -->
+  <div id="modal-photo-zoom" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="zoom-modal-title">
+    <div class="modal-box photo-zoom-box">
+      <div class="modal-header" style="border-bottom-color:#5b4735;">
+        <h3 id="zoom-modal-title" style="color:var(--amber-glow);">PHOTO INSPECTION</h3>
+        <button class="modal-close" data-close-modal="modal-photo-zoom" type="button" aria-label="Close">✕</button>
+      </div>
+      <img id="zoom-modal-img" class="photo-zoom-img" src="" alt="Enlarged agent portrait" />
+      <p id="zoom-modal-caption" style="margin-top:10px; font-size:0.9rem; color:#dfd0b8;"></p>
+    </div>
+  </div>
+
+  <!-- =====================================
+       MODAL: VOCABULARY (12 WORDS)
+       ===================================== -->
+  <div id="modal-vocab" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="vocab-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="vocab-modal-title">SPY VOCABULARY (12 WORDS)</h3>
+        <button class="modal-close" data-close-modal="modal-vocab" type="button" aria-label="Close">✕</button>
+      </div>
+      <p style="font-size:0.9rem; color:var(--ink-muted); margin-bottom:14px;">
+        Tip: Hover or click any underlined word in the game to see its meaning!
+      </p>
+      <div id="vocab-modal-list" class="vocab-list"></div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       MODAL: GRAMMAR TIP (MODALS OF DEDUCTION)
+       ===================================== -->
+  <div id="modal-grammar" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="grammar-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="grammar-modal-title">GRAMMAR TIP: MODALS OF DEDUCTION</h3>
+        <button class="modal-close" data-close-modal="modal-grammar" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <div class="grammar-card must">
+        <h4>MUST = 99% sure it is TRUE</h4>
+        <p>Use <strong>must</strong> when the evidence proves something is true.</p>
+        <p class="grammar-example">"She has blonde hair, glasses, and a wrist tattoo. It <strong>must</strong> be Agent Viper!"</p>
+      </div>
+
+      <div class="grammar-card might">
+        <h4>MIGHT / COULD = 50% POSSIBLE</h4>
+        <p>Use <strong>might</strong> or <strong>could</strong> when something is possible, but you are not 100% sure yet.</p>
+        <p class="grammar-example">"Both Shadow and Viper lied. It <strong>might</strong> be Shadow, or it <strong>could</strong> be Viper."</p>
+      </div>
+
+      <div class="grammar-card cant">
+        <h4>CAN'T = 99% sure it is IMPOSSIBLE</h4>
+        <p>Use <strong>can't</strong> when the evidence proves something is impossible.</p>
+        <p class="grammar-example">"Agent Nova was in London at 22:00. It <strong>can't</strong> be her!"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================
+       FULL-SCREEN HANDCUFFS TRANSITION
+       ========================================= -->
+  <div id="handcuff-transition" aria-hidden="true">
+    <div class="cuff-stage">
+      <svg class="cuff-half cuff-left" viewBox="0 0 160 140">
+        <defs>
+          <linearGradient id="steelL" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e5e9ed" />
+            <stop offset="45%" stop-color="#8b959e" />
+            <stop offset="100%" stop-color="#3c434a" />
+          </linearGradient>
+        </defs>
+        <circle cx="62" cy="72" r="46" fill="none" stroke="url(#steelL)" stroke-width="14" />
+        <circle cx="62" cy="72" r="35" fill="none" stroke="#1d2226" stroke-width="3" />
+        <rect x="98" y="60" width="38" height="24" rx="6" fill="url(#steelL)" stroke="#23282d" stroke-width="2.5" />
+        <circle cx="117" cy="72" r="4.5" fill="#1b1f22" />
+        <rect x="134" y="67" width="22" height="10" rx="5" fill="#9ea8b0" stroke="#2c3238" stroke-width="2" />
+      </svg>
+
+      <svg class="cuff-half cuff-right" viewBox="0 0 160 140">
+        <defs>
+          <linearGradient id="steelR" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#e5e9ed" />
+            <stop offset="45%" stop-color="#8b959e" />
+            <stop offset="100%" stop-color="#3c434a" />
+          </linearGradient>
+        </defs>
+        <circle cx="98" cy="72" r="46" fill="none" stroke="url(#steelR)" stroke-width="14" />
+        <circle cx="98" cy="72" r="35" fill="none" stroke="#1d2226" stroke-width="3" />
+        <rect x="24" y="60" width="38" height="24" rx="6" fill="url(#steelR)" stroke="#23282d" stroke-width="2.5" />
+        <circle cx="43" cy="72" r="4.5" fill="#1b1f22" />
+        <rect x="4" y="67" width="22" height="10" rx="5" fill="#9ea8b0" stroke="#2c3238" stroke-width="2" />
+      </svg>
+    </div>
+    <div class="top-secret-flash">TOP SECRET</div>
+    <div class="transition-subtext" id="transition-subtext">LOADING CASE FILE...</div>
+  </div>
+
+  <!-- Global Floating Tooltip for Vocabulary Words -->
+  <div id="vocab-tooltip" role="tooltip">
+    <span class="tt-word" id="tt-word"></span>
+    <span id="tt-def"></span>
+  </div>
+
+  <script>
+    /* =====================================================================
+       1. SAFE WEB AUDIO API SOUND ENGINE (ALL CALLS WRAPPED IN TRY/CATCH)
+       ===================================================================== */
+    const SoundEngine = {
+      enabled: true,
+      ctx: null,
+
+      getCtx() {
+        try {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return null;
+            this.ctx = new AudioCtx();
+          }
+          if (this.ctx.state === "suspended") {
+            this.ctx.resume().catch(() => {});
+          }
+          return this.ctx;
+        } catch (e) {
+          return null;
+        }
+      },
+
+      playTone(freq, duration, type = "sine", volume = 0.08, delay = 0) {
+        if (!this.enabled) return;
+        try {
+          const ctx = this.getCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime + delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(volume, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + duration + 0.01);
+        } catch (e) {}
+      },
+
+      paperFlip() {
+        if (!this.enabled) return;
+        try {
+          const ctx = this.getCtx();
+          if (!ctx) return;
+          const bufferSize = Math.floor(ctx.sampleRate * 0.08);
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+          }
+          const src = ctx.createBufferSource();
+          src.buffer = buffer;
+          const filter = ctx.createBiquadFilter();
+          filter.type = "bandpass";
+          filter.frequency.value = 1400;
+          const gain = ctx.createGain();
+          gain.gain.value = 0.09;
+          src.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          src.start();
+        } catch (e) {}
+      },
+
+      stampThud() {
+        this.playTone(135, 0.11, "triangle", 0.14);
+        this.playTone(75, 0.14, "sine", 0.12, 0.02);
+      },
+
+      handcuffClank() {
+        this.playTone(980, 0.09, "square", 0.06, 0);
+        this.playTone(1420, 0.12, "triangle", 0.09, 0.06);
+        this.playTone(720, 0.16, "sawtooth", 0.05, 0.11);
+      },
+
+      typeClick() {
+        this.playTone(620 + Math.random() * 140, 0.022, "square", 0.02);
+      },
+
+      lieBeep() {
+        this.playTone(880, 0.12, "sawtooth", 0.09, 0);
+        this.playTone(660, 0.18, "sawtooth", 0.09, 0.13);
+      },
+
+      chime() {
+        this.playTone(523.25, 0.12, "triangle", 0.08, 0);
+        this.playTone(659.25, 0.14, "triangle", 0.08, 0.09);
+        this.playTone(783.99, 0.2, "triangle", 0.09, 0.18);
+      },
+
+      errorBuzz() {
+        this.playTone(185, 0.16, "sawtooth", 0.08, 0);
+        this.playTone(150, 0.18, "sawtooth", 0.07, 0.12);
+      }
+    };
+
+    /* =====================================================================
+       2. VOCABULARY DATA (12 TARGET WORDS) & SAFE HIGHLIGHTER
+       ===================================================================== */
+    const VOCABULARY = [
+      { word: "fake ID", patterns: ["fake ID"], def: "A false identity card used to pretend you are someone else.", example: "She used a fake ID to enter the building." },
+      { word: "infiltrate", patterns: ["infiltrate", "infiltrated", "infiltration"], def: "To secretly enter a secure building or organization.", example: "The spy infiltrated headquarters at 22:00." },
+      { word: "laser grid", patterns: ["laser grid"], def: "A security system made of criss-crossing laser beams.", example: "The thief turned off the red laser grid." },
+      { word: "classified", patterns: ["classified"], def: "Official secret information that only authorized people can see.", example: "Classified files were stolen from the vault." },
+      { word: "disguise", patterns: ["disguise", "disguises"], def: "Clothes, wigs, or makeup used to hide who you really are.", example: "Agent Viper is a master of disguise." },
+      { word: "surveillance", patterns: ["surveillance"], def: "Watching a place or person closely using cameras or spies.", example: "Surveillance cameras recorded the hallway." },
+      { word: "accomplice", patterns: ["accomplice"], def: "A partner who helps someone commit a crime.", example: "Did the thief work alone or with an accomplice?" },
+      { word: "undercover", patterns: ["undercover"], def: "Working secretly in disguise to gather information.", example: "Agent Nova was on an undercover mission in London." },
+      { word: "fingerprint", patterns: ["fingerprint", "fingerprints"], def: "The unique mark left by a person's finger on a surface.", example: "His fingerprint was found near the hallway door." },
+      { word: "to interrogate", patterns: ["to interrogate", "interrogate", "interrogated", "interrogation"], def: "To ask a suspect tough questions to find out the truth.", example: "We need to interrogate all six suspects." },
+      { word: "double agent", patterns: ["double agent"], def: "A spy who secretly works for the enemy while pretending to work for you.", example: "One of our own agents is a double agent!" },
+      { word: "alibi", patterns: ["alibi", "alibis"], def: "Proof that a person was somewhere else when a crime happened.", example: "He has a solid alibi — cameras saw him." }
+    ];
+
+    const vocabLookup = {};
+    const allPatterns = [];
+    VOCABULARY.forEach(item => {
+      item.patterns.forEach(p => {
+        vocabLookup[p.toLowerCase()] = { word: item.word, def: item.def };
+        allPatterns.push(p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+      });
+    });
+    allPatterns.sort((a, b) => b.length - a.length);
+    const vocabRegex = new RegExp(`\\b(${allPatterns.join("|")})\\b`, "gi");
+
+    function escapeHTML(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function highlightVocab(text) {
+      const safe = escapeHTML(text);
+      return safe.replace(vocabRegex, match => {
+        const info = vocabLookup[match.toLowerCase()];
+        if (!info) return match;
+        return `<span class="vocab-word" tabindex="0" data-word="${escapeHTML(info.word)}" data-def="${escapeHTML(info.def)}">${match}</span>`;
+      });
+    }
+
+    /* =====================================================================
+       3. THE 10 AGENTS & SAFE 5-STEP PORTRAIT FALLBACK SYSTEM
+       ===================================================================== */
+    const AGENTS = [
+      // 4 INNOCENT AGENTS (verified alibis)
+      {
+        id: "rex",
+        name: "Agent Rex",
+        gender: "M",
+        role: "Surveillance Analyst",
+        hair: "Grey hair",
+        glasses: true,
+        tattoo: "None",
+        traitsText: "Grey hair, thin glasses.",
+        alibi: "At 22:00 he was on a live video call with 3 agency directors in Berlin. Verified by HQ call logs.",
+        suspicious: false,
+        clearReason: "he was on a verified live video call with 3 agency directors in Berlin"
+      },
+      {
+        id: "frost",
+        name: "Agent Frost",
+        gender: "M",
+        role: "Cybersecurity Hacker",
+        hair: "Dark spiky hair",
+        glasses: false,
+        tattoo: "None",
+        traitsText: "Dark spiky hair, no glasses. Note: Afraid of heights.",
+        alibi: "At 21:55–22:30 he was recorded on street surveillance cameras buying coffee 5 km from headquarters.",
+        suspicious: false,
+        clearReason: "he is afraid of heights and street surveillance cameras recorded him 5 km away"
+      },
+      {
+        id: "nova",
+        name: "Agent Nova",
+        gender: "F",
+        role: "Tech Specialist",
+        hair: "Short blonde hair",
+        glasses: true,
+        tattoo: "None",
+        traitsText: "Short blonde hair, black glasses.",
+        alibi: "She was on an undercover mission in London until 23:00. Verified flight tickets and passport scan.",
+        suspicious: false,
+        clearReason: "she has verified flight tickets and a passport scan from London"
+      },
+      {
+        id: "ivy",
+        name: "Agent Ivy",
+        gender: "F",
+        role: "Codebreaker",
+        hair: "Long red hair",
+        glasses: false,
+        tattoo: "None",
+        traitsText: "Long red hair, no glasses.",
+        alibi: "She was at the city hospital from 20:00 to 23:30 with a sprained ankle. Signed doctor's report.",
+        suspicious: false,
+        clearReason: "she was at the city hospital with a signed doctor's report"
+      },
+
+      // 6 SUSPECTS (weak or unverified alibis -> Phase 2)
+      {
+        id: "maya",
+        name: "Agent Maya",
+        gender: "F",
+        role: "Getaway Driver",
+        hair: "Dark hair in a bun",
+        glasses: true,
+        tattoo: "Star tattoo (neck)",
+        traitsText: "Dark hair in a bun, black glasses, star tattoo on neck.",
+        alibi: "Says she was fixing her motorcycle alone in the garage at 22:00. No witnesses.",
+        suspicious: true,
+        isLiar: false,
+        statement: "I know I had no witnesses, detective, but I am telling the truth! At 22:00 I was alone in my garage fixing my motorcycle engine. I stayed there until midnight with oil all over my hands!",
+        phase2Feedback: "She might be telling the truth. Her story matches her alibi! It can't be Agent Maya — she is CLEARED!"
+      },
+      {
+        id: "leo",
+        name: "Agent Leo",
+        gender: "M",
+        role: "Gadget Technician",
+        hair: "Messy blonde hair",
+        glasses: false,
+        tattoo: "None",
+        traitsText: "Messy blonde hair, red scarf, no glasses.",
+        alibi: "Says he was testing drones alone on the rooftop at 22:00. No witnesses.",
+        suspicious: true,
+        isLiar: false,
+        statement: "I promise I didn't touch the vault! At 22:00 I was outside on the rooftop testing my new mini-drones alone. It was freezing up there, so I wore my thick red scarf the whole time.",
+        phase2Feedback: "He might be telling the truth! Every detail matches his dossier and alibi. It can't be Agent Leo — he is CLEARED!"
+      },
+      {
+        id: "shadow",
+        name: "Agent Shadow",
+        gender: "M",
+        role: "Locksmith & Safe Expert",
+        hair: "Blonde hair",
+        glasses: true,
+        tattoo: "None",
+        traitsText: "Blonde hair, glasses, NO tattoo.",
+        alibi: "Says he was sleeping at home at 22:00, yet his fingerprint was found near the hallway door.",
+        suspicious: true,
+        isLiar: true,
+        statement: "It can't be me! At 22:00 I was fast asleep at home in bed. I couldn't open the safe—wait, I mean I don't even know the new vault code, and the laser grid was definitely red!",
+        phase2Feedback: "BEEP! You can't be innocent! How do you know the laser grid was red if you were asleep at home? You must be lying!"
+      },
+      {
+        id: "raven",
+        name: "Agent Raven",
+        gender: "F",
+        role: "Data Specialist",
+        hair: "Short black bob hair",
+        glasses: true,
+        tattoo: "Snake tattoo (wrist)",
+        traitsText: "Short black bob hair, black glasses, snake tattoo on wrist.",
+        alibi: "Says she was watching a movie alone at a dark cinema at 22:00. Lost her ticket.",
+        suspicious: true,
+        isLiar: true,
+        statement: "Why interrogate me? At 22:00 I was sitting alone in a dark cinema without my phone! My accomplice—I mean, my friend Tom—gave me a fake ID to get in! Wait, no, I was totally alone!",
+        phase2Feedback: "BEEP! Lie detected! First you said you were alone, then you mentioned an accomplice and a fake ID! You must be lying!"
+      },
+      {
+        id: "hawk",
+        name: "Agent Hawk",
+        gender: "M",
+        role: "Rooftop Scout",
+        hair: "Short buzz-cut blonde hair",
+        glasses: false,
+        tattoo: "Eagle tattoo (wrist)",
+        traitsText: "Short buzz-cut blonde hair, no glasses, eagle tattoo on wrist.",
+        alibi: "Says he was at the gym at 22:00, but his gym card wasn't scanned.",
+        suspicious: true,
+        isLiar: true,
+        statement: "Leave me alone! I was lifting weights at the gym at 22:00. I wasn't near the 15th-floor window! I didn't touch those classified files in the vault! Wait—how did I know which floor it was?",
+        phase2Feedback: "BEEP! You can't be telling the truth! You knew about the 15th-floor window and the classified files in the vault! You must be lying!"
+      },
+      {
+        id: "viper",
+        name: "Agent Viper",
+        gender: "F",
+        role: "Master of Disguise",
+        hair: "Long blonde hair",
+        glasses: true,
+        tattoo: "Rose tattoo (wrist)",
+        traitsText: "Long blonde hair, black glasses, rose tattoo on wrist.",
+        alibi: "Says she was reading at home without her phone at 22:00. No witnesses.",
+        suspicious: true,
+        isLiar: true,
+        isDoubleAgent: true,
+        statement: "I am completely innocent! I was just reading a book at home without my phone. I never wore a disguise! And the surveillance cameras on the 15th floor were broken anyway, so you have no proof!",
+        phase2Feedback: "BEEP! You can't be innocent! How do you know the 15th-floor surveillance cameras were broken? You must be lying!"
+      }
+    ];
+
+    function getNoirFallbackDataURI(agentName) {
+      const safeName = String(agentName || "AGENT").toUpperCase().replace(/[&<>"]/g, "");
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400">
+          <defs>
+            <radialGradient id="g" cx="50%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#3a2f26"/>
+              <stop offset="100%" stop-color="#14100d"/>
+            </radialGradient>
+          </defs>
+          <rect width="300" height="400" fill="url(#g)"/>
+          <line x1="0" y1="80" x2="300" y2="80" stroke="rgba(245,185,83,0.12)" stroke-width="1"/>
+          <line x1="0" y1="160" x2="300" y2="160" stroke="rgba(245,185,83,0.12)" stroke-width="1"/>
+          <line x1="0" y1="240" x2="300" y2="240" stroke="rgba(245,185,83,0.12)" stroke-width="1"/>
+          <circle cx="150" cy="145" r="56" fill="#0d0a08" stroke="#8a6d43" stroke-width="3"/>
+          <path d="M 55 340 Q 65 235 150 235 Q 235 235 245 340 Z" fill="#0d0a08" stroke="#8a6d43" stroke-width="3"/>
+          <rect x="28" y="346" width="244" height="34" rx="4" fill="#221a14" stroke="#f5b953" stroke-width="1.5"/>
+          <text x="150" y="368" text-anchor="middle" fill="#f5b953" font-family="monospace" font-size="17" font-weight="bold">${safeName}</text>
+        </svg>
+      `;
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+    // Global capture-phase image error fallback handler (zero inline onerror attributes!)
+    document.addEventListener("error", e => {
+      const img = e.target;
+      if (!img || img.tagName !== "IMG" || !img.dataset.agentKey) return;
+      const key = img.dataset.agentKey;
+      const name = img.dataset.agentName || "AGENT";
+      const step = parseInt(img.dataset.step || "0", 10);
+      const candidates = [
+        `agent ${key}.png`,
+        `gouble agent/agent ${key}.jfif`,
+        `agent ${key}.jfif`
+      ];
+
+      if (step < candidates.length) {
+        img.dataset.step = String(step + 1);
+        img.src = candidates[step];
+      } else if (step === candidates.length) {
+        img.dataset.step = "done";
+        img.src = getNoirFallbackDataURI(name);
+      }
+    }, true);
+
+    function createAgentPortraitHTML(agent) {
+      return `<img src="gouble agent/agent ${agent.id}.png" alt="${escapeHTML(agent.name)} portrait" data-agent-key="${agent.id}" data-agent-name="${escapeHTML(agent.name)}" data-step="0" />`;
+    }
+
+    /* =====================================================================
+       4. PHASE 3 CLUES (ONE AT A TIME, CLUE 1 SHOWN AUTOMATICALLY)
+       ===================================================================== */
+    const PHASE3_CLUES = [
+      {
+        num: 1,
+        text: "Surveillance footage shows the double agent has BLONDE HAIR.",
+        instruction: "Click the suspect who CAN'T be the double agent to eliminate them!",
+        targetId: "raven",
+        successMsg: "It can't be Agent Raven because she has black hair! It might be Shadow, Hawk, or Viper.",
+        wrongMsg: "Look closely at the photo! That agent has blonde hair, so it could still be them. Who has BLACK hair?"
+      },
+      {
+        num: 2,
+        text: "Forensics found broken GLASSES next to the laser grid.",
+        instruction: "Click the suspect who CAN'T be the double agent now!",
+        targetId: "hawk",
+        successMsg: "It can't be Agent Hawk because he doesn't wear glasses! It could be Shadow or Viper.",
+        wrongMsg: "Check their portrait! That agent wears glasses, so it might still be them. Who does NOT wear glasses?"
+      },
+      {
+        num: 3,
+        text: "A guard saw a TATTOO on the thief's wrist while they took the classified files.",
+        instruction: "Click the suspect who CAN'T be the double agent!",
+        targetId: "shadow",
+        successMsg: "It can't be Agent Shadow because he has no tattoo! It MUST be Agent Viper!",
+        wrongMsg: "Check their dossier and portrait! Who has NO tattoo?"
+      }
+    ];
+
+    /* =====================================================================
+       5. GAME STATE
+       ===================================================================== */
+    const INTERROGATION_ORDER = ["maya", "shadow", "leo", "raven", "hawk", "viper"];
+    const FINAL_SUSPECT_IDS = ["shadow", "raven", "hawk", "viper"];
+
+    let state = {
+      readIds: new Set(),
+      selectMode: false,
+      selectedSuspects: new Set(),
+      interrogationIndex: 0,
+      typingTimer: null,
+      isTyping: false,
+      interrogationAnswered: false,
+      clueIndex: 0,
+      waitingForNextClue: false,
+      eliminatedIds: new Set(),
+      readyToArrest: false
+    };
+
+    /* =====================================================================
+       6. INTRO & SCREEN TRANSITIONS
+       ===================================================================== */
+    function initIntroAndModals() {
+      document.getElementById("intro-story").innerHTML = highlightVocab(
+        "At 22:00 last night, a double agent infiltrated our headquarters, turned off the laser grid, and stole classified files from the 15th-floor vault."
+      );
+
+      const steps = [
+        "Read the 10 agent dossiers and alibis in your detective notebook, then select the 6 suspects.",
+        "Interrogate the 6 suspects under the lamp with the Lie Detector.",
+        "Use final surveillance and forensic clues one by one to arrest the double agent!"
+      ];
+      document.getElementById("intro-steps").innerHTML = steps
+        .map((s, i) => `<li><span class="step-num">${i + 1}</span><span>${highlightVocab(s)}</span></li>`)
+        .join("");
+
+      document.getElementById("vocab-modal-list").innerHTML = VOCABULARY.map(v => `
+        <div class="vocab-item">
+          <strong>${escapeHTML(v.word)}</strong>
+          <span>${escapeHTML(v.def)}</span>
+          <span class="vocab-ex">"${escapeHTML(v.example)}"</span>
+        </div>
+      `).join("");
+    }
+
+    function setPhaseLabel(text) {
+      document.getElementById("phase-indicator").textContent = text;
+    }
+
+    function transitionToScreen(targetScreenId, phaseLabel, subtext, onComplete) {
+      const overlay = document.getElementById("handcuff-transition");
+      const sub = document.getElementById("transition-subtext");
+      sub.textContent = subtext || "OPENING CLASSIFIED FILE...";
+
+      overlay.classList.add("active");
+      overlay.classList.remove("snap");
+
+      setTimeout(() => {
+        overlay.classList.add("snap");
+        SoundEngine.handcuffClank();
+      }, 110);
+
+      setTimeout(() => {
+        document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+        const target = document.getElementById(targetScreenId);
+        if (target) target.classList.add("active");
+        document.body.classList.toggle("interrogation-mode", targetScreenId === "screen-phase2");
+        setPhaseLabel(phaseLabel);
+        window.scrollTo({ top: 0, behavior: "instant" });
+        if (onComplete) onComplete();
+      }, 580);
+
+      setTimeout(() => {
+        overlay.classList.remove("active", "snap");
+      }, 1050);
+    }
+
+    /* =====================================================================
+       7. STAGE 1: DETECTIVE'S NOTEBOOK
+       ===================================================================== */
+    function renderPhase1() {
+      const grid = document.getElementById("agents-grid");
+      const pages = document.getElementById("notebook-pages");
+      pages.classList.toggle("select-mode-active", state.selectMode);
+
+      grid.innerHTML = AGENTS.map(agent => {
+        const isRead = state.readIds.has(agent.id);
+        const isSuspect = state.selectedSuspects.has(agent.id);
+        return `
+          <div class="agent-card ${isSuspect ? "is-suspect" : ""}" data-agent-id="${agent.id}" role="button" tabindex="0">
+            <div class="portrait-frame">
+              ${createAgentPortraitHTML(agent)}
+              <div class="suspect-stamp">SUSPECT</div>
+            </div>
+            <div class="agent-name">${agent.name}</div>
+            <div class="agent-role-mini">${agent.role}</div>
+            <span class="read-badge ${isRead ? "read" : ""}">${isRead ? "✓ READ" : "UNREAD"}</span>
+            <button class="peek-dossier-btn" data-peek="${agent.id}" type="button">📄 Read Dossier</button>
+          </div>
+        `;
+      }).join("");
+
+      const readCount = state.readIds.size;
+      document.getElementById("read-counter").textContent = `Dossiers Read: ${readCount} / 10`;
+
+      const toggleBtn = document.getElementById("btn-toggle-select-mode");
+      const confirmBtn = document.getElementById("btn-confirm-suspects");
+      const suspectCounter = document.getElementById("suspect-counter");
+      const modeBanner = document.getElementById("select-mode-banner");
+
+      if (state.selectMode) {
+        toggleBtn.innerHTML = `<span>📖</span> BACK TO READING MODE`;
+        toggleBtn.className = "btn btn-secondary";
+        confirmBtn.style.display = "inline-flex";
+        confirmBtn.innerHTML = `<span>🔦</span> PROCEED TO INTERROGATION (${state.selectedSuspects.size}/6 Selected)`;
+        suspectCounter.style.display = "inline-block";
+        suspectCounter.textContent = `Suspects: ${state.selectedSuspects.size} / 6`;
+        modeBanner.classList.add("visible");
+        document.getElementById("phase1-subtitle").textContent = "Click the 6 agents with weak or unverified alibis to stamp them as SUSPECT.";
+      } else {
+        toggleBtn.innerHTML = `<span>📌</span> SELECT SUSPECTS`;
+        toggleBtn.className = readCount === 10 ? "btn btn-primary btn-pulse" : "btn btn-primary";
+        confirmBtn.style.display = "none";
+        suspectCounter.style.display = "none";
+        modeBanner.classList.remove("visible");
+        document.getElementById("phase1-subtitle").textContent = "Click each agent's photo to read their dossier and 22:00 alibi.";
+      }
+    }
+
+    function openDossierModal(agentId) {
+      const agent = AGENTS.find(a => a.id === agentId);
+      if (!agent) return;
+      SoundEngine.paperFlip();
+      state.readIds.add(agentId);
+
+      document.getElementById("dossier-modal-title").textContent = `DOSSIER: ${agent.name.toUpperCase()}`;
+      const portraitContainer = document.getElementById("dossier-modal-portrait");
+      portraitContainer.innerHTML = createAgentPortraitHTML(agent);
+      portraitContainer.dataset.agentId = agent.id;
+      document.getElementById("dossier-modal-role").innerHTML = highlightVocab(agent.role);
+      document.getElementById("dossier-modal-traits").innerHTML = highlightVocab(agent.traitsText);
+      document.getElementById("dossier-modal-alibi").innerHTML = highlightVocab(agent.alibi);
+
+      openModal("modal-dossier");
+      renderPhase1();
+    }
+
+    function openPhotoZoomModal(agentId) {
+      const agent = AGENTS.find(a => a.id === agentId);
+      if (!agent) return;
+      const modalImg = document.querySelector("#dossier-modal-portrait img");
+      const zoomImg = document.getElementById("zoom-modal-img");
+      document.getElementById("zoom-modal-title").textContent = `${agent.name.toUpperCase()} — PHOTO`;
+      zoomImg.dataset.agentKey = agent.id;
+      zoomImg.dataset.agentName = agent.name;
+      zoomImg.dataset.step = modalImg ? (modalImg.dataset.step || "0") : "0";
+      zoomImg.src = modalImg ? modalImg.src : `gouble agent/agent ${agent.id}.png`;
+      document.getElementById("zoom-modal-caption").textContent = `${agent.role} — ${agent.traitsText}`;
+      SoundEngine.paperFlip();
+      openModal("modal-photo-zoom");
+    }
+
+    function showPhase1Feedback(type, html) {
+      const box = document.getElementById("phase1-feedback");
+      box.className = `feedback-banner visible ${type}`;
+      box.innerHTML = html;
+    }
+
+    function hidePhase1Feedback() {
+      const box = document.getElementById("phase1-feedback");
+      box.className = "feedback-banner";
+      box.innerHTML = "";
+    }
+
+    function checkPhase1Selection() {
+      const selected = Array.from(state.selectedSuspects);
+      if (selected.length === 0) {
+        SoundEngine.errorBuzz();
+        showPhase1Feedback("error", "You haven't selected any suspects yet! Click on the 6 agents whose alibis have no witnesses or proof.");
+        return;
+      }
+
+      const wrongInnocents = selected
+        .map(id => AGENTS.find(a => a.id === id))
+        .filter(a => a && !a.suspicious);
+
+      if (wrongInnocents.length > 0) {
+        SoundEngine.errorBuzz();
+        const ex = wrongInnocents[0];
+        showPhase1Feedback(
+          "error",
+          `<strong>Check ${ex.name}!</strong> ${ex.gender === "F" ? "She" : "He"} <strong>can't</strong> be a suspect because ${ex.clearReason}. Click ${ex.name} to unmark them.`
+        );
+        return;
+      }
+
+      const missed = AGENTS.filter(a => a.suspicious && !state.selectedSuspects.has(a.id));
+      if (missed.length > 0) {
+        SoundEngine.errorBuzz();
+        showPhase1Feedback(
+          "info",
+          `<strong>Good deduction!</strong> Everyone you picked looks suspicious, so it <strong>might</strong> be one of them — but you still need to mark <strong>${missed.length} more</strong> suspect(s) with weak alibis!`
+        );
+        return;
+      }
+
+      SoundEngine.chime();
+      hidePhase1Feedback();
+      state.interrogationIndex = 0;
+      transitionToScreen("screen-phase2", "Phase 2: Interrogation", "ENTERING INTERROGATION ROOM...", () => {
+        loadInterrogationSuspect();
+      });
+    }
+
+    /* =====================================================================
+       8. STAGE 2: INTERROGATION ROOM (THE LIE DETECTOR)
+       ===================================================================== */
+    function loadInterrogationSuspect() {
+      clearInterval(state.typingTimer);
+      state.isTyping = false;
+      state.interrogationAnswered = false;
+
+      const agentId = INTERROGATION_ORDER[state.interrogationIndex];
+      const agent = AGENTS.find(a => a.id === agentId);
+
+      document.getElementById("interrogation-progress").textContent =
+        `Suspect ${state.interrogationIndex + 1} of ${INTERROGATION_ORDER.length}`;
+      document.getElementById("interrogation-portrait").innerHTML = createAgentPortraitHTML(agent);
+      document.getElementById("interrogation-name").textContent = agent.name;
+      document.getElementById("interrogation-role").innerHTML = highlightVocab(agent.role);
+      document.getElementById("interrogation-traits").innerHTML = highlightVocab(agent.traitsText);
+      document.getElementById("interrogation-alibi").innerHTML = highlightVocab(agent.alibi);
+
+      document.getElementById("verdict-stamp").className = "verdict-stamp";
+
+      const fb = document.getElementById("interrogation-feedback");
+      fb.className = "interrogation-feedback dark-vocab";
+      fb.innerHTML = "";
+
+      document.getElementById("btn-next-suspect").style.display = "none";
+      // Buttons activate once typing finishes (or immediately on Skip)
+      document.getElementById("btn-truth").disabled = true;
+      document.getElementById("btn-lie").disabled = true;
+
+      startTypewriter(agent.statement);
+    }
+
+    function startTypewriter(fullText) {
+      const speechEl = document.getElementById("speech-text");
+      const skipBtn = document.getElementById("btn-skip-typing");
+      skipBtn.style.display = "inline-block";
+      speechEl.innerHTML = '<span class="typing-cursor"></span>';
+
+      let idx = 0;
+      state.isTyping = true;
+
+      clearInterval(state.typingTimer);
+      state.typingTimer = setInterval(() => {
+        idx++;
+        speechEl.innerHTML = escapeHTML(fullText.slice(0, idx)) + '<span class="typing-cursor"></span>';
+
+        if (idx % 3 === 0 && fullText[idx - 1] !== " ") {
+          SoundEngine.typeClick();
+        }
+
+        if (idx >= fullText.length) {
+          finishTypewriter(fullText);
+        }
+      }, 25);
+    }
+
+    function finishTypewriter(fullText) {
+      clearInterval(state.typingTimer);
+      state.isTyping = false;
+      document.getElementById("speech-text").innerHTML = highlightVocab(fullText);
+      document.getElementById("btn-skip-typing").style.display = "none";
+      if (!state.interrogationAnswered) {
+        document.getElementById("btn-truth").disabled = false;
+        document.getElementById("btn-lie").disabled = false;
+      }
+    }
+
+    function handleInterrogationChoice(playerSaysLie) {
+      if (state.interrogationAnswered || state.isTyping) return;
+
+      const agentId = INTERROGATION_ORDER[state.interrogationIndex];
+      const agent = AGENTS.find(a => a.id === agentId);
+      const fb = document.getElementById("interrogation-feedback");
+      const isCorrect = (playerSaysLie === agent.isLiar);
+
+      if (!isCorrect) {
+        SoundEngine.errorBuzz();
+        const panel = document.getElementById("speech-panel");
+        panel.classList.remove("shake");
+        void panel.offsetWidth;
+        panel.classList.add("shake");
+
+        fb.className = "interrogation-feedback dark-vocab visible wrong";
+        fb.innerHTML = agent.isLiar
+          ? "<strong>Look closer, Detective!</strong> Read the monologue again — the suspect made a big slip-up or knows secret details about the crime!"
+          : "<strong>Not quite!</strong> Compare their monologue with their original alibi above. Does anything contradict their story? Try again!";
+        return;
+      }
+
+      state.interrogationAnswered = true;
+      document.getElementById("btn-truth").disabled = true;
+      document.getElementById("btn-lie").disabled = true;
+
+      const stamp = document.getElementById("verdict-stamp");
+      if (agent.isLiar) {
+        SoundEngine.lieBeep();
+        stamp.textContent = "LIAR!";
+        stamp.className = "verdict-stamp liar show";
+      } else {
+        SoundEngine.chime();
+        stamp.textContent = "CLEARED";
+        stamp.className = "verdict-stamp cleared show";
+      }
+
+      fb.className = "interrogation-feedback dark-vocab visible correct";
+      fb.innerHTML = highlightVocab(agent.phase2Feedback);
+
+      const nextBtn = document.getElementById("btn-next-suspect");
+      nextBtn.style.display = "inline-flex";
+      nextBtn.innerHTML = state.interrogationIndex === INTERROGATION_ORDER.length - 1
+        ? "GO TO FINAL DEDUCTION ➔"
+        : "NEXT SUSPECT ➔";
+    }
+
+    /* =====================================================================
+       9. STAGE 3: FINAL DEDUCTION (CLUE-BY-CLUE ELIMINATION)
+       ===================================================================== */
+    function initPhase3() {
+      state.clueIndex = 0;
+      state.waitingForNextClue = false;
+      state.eliminatedIds = new Set();
+      state.readyToArrest = false;
+
+      document.getElementById("revealed-clues-history").innerHTML = "";
+      document.getElementById("phase3-feedback").className = "feedback-banner";
+      document.getElementById("phase3-arrest-bar").classList.remove("visible");
+      document.getElementById("btn-reveal-clue").style.display = "none";
+
+      // Clue 1 is shown automatically
+      showCurrentClue();
+      renderFinalSuspects();
+    }
+
+    function showCurrentClue() {
+      const clue = PHASE3_CLUES[state.clueIndex];
+      document.getElementById("active-clue-box").innerHTML = `
+        <strong>CLUE #${clue.num}:</strong> ${highlightVocab(clue.text)}
+        <div class="clue-instruction">➔ ${escapeHTML(clue.instruction)}</div>
+      `;
+    }
+
+    function renderFinalSuspects() {
+      const grid = document.getElementById("final-suspects-grid");
+      const remaining = FINAL_SUSPECT_IDS.length - state.eliminatedIds.size;
+      document.getElementById("clue-step-pill").textContent =
+        `${remaining} Suspect${remaining === 1 ? "" : "s"} Remaining`;
+
+      grid.innerHTML = FINAL_SUSPECT_IDS.map(id => {
+        const a = AGENTS.find(x => x.id === id);
+        const isElim = state.eliminatedIds.has(id);
+        return `
+          <div class="evidence-card ${isElim ? "eliminated" : ""}" data-final-id="${a.id}" role="button" tabindex="0">
+            <div class="portrait-frame" style="max-width:155px;">
+              ${createAgentPortraitHTML(a)}
+            </div>
+            <div class="agent-name" style="font-size:1.1rem;">${a.name}</div>
+            <div class="agent-role-mini">${a.role}</div>
+            <div class="trait-chips">
+              <div class="trait-chip"><strong>Hair:</strong> ${a.hair}</div>
+              <div class="trait-chip"><strong>Glasses:</strong> ${a.glasses ? "Yes" : "No"}</div>
+              <div class="trait-chip"><strong>Tattoo:</strong> ${a.tattoo}</div>
+            </div>
+            <div class="eliminated-stamp">ELIMINATED</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function handleFinalSuspectClick(agentId) {
+      if (state.eliminatedIds.has(agentId)) return;
+
+      const fb = document.getElementById("phase3-feedback");
+
+      if (state.readyToArrest) {
+        if (agentId === "viper") triggerArrestViper();
+        return;
+      }
+
+      if (state.waitingForNextClue) {
+        SoundEngine.errorBuzz();
+        fb.className = "feedback-banner visible info";
+        fb.innerHTML = "Click <strong>REVEAL NEXT CLUE</strong> first before eliminating the next suspect!";
+        return;
+      }
+
+      const clue = PHASE3_CLUES[state.clueIndex];
+      if (agentId !== clue.targetId) {
+        SoundEngine.errorBuzz();
+        fb.className = "feedback-banner visible error";
+        fb.innerHTML = `<strong>Not quite!</strong> ${highlightVocab(clue.wrongMsg)}`;
+        return;
+      }
+
+      // Correct elimination!
+      SoundEngine.stampThud();
+      state.eliminatedIds.add(agentId);
+
+      const hist = document.getElementById("revealed-clues-history");
+      hist.innerHTML += `<div class="history-clue-item"><strong>Clue #${clue.num}:</strong> ${highlightVocab(clue.text)}</div>`;
+
+      fb.className = "feedback-banner visible success";
+      fb.innerHTML = `<strong>Great deduction!</strong> ${highlightVocab(clue.successMsg)}`;
+
+      renderFinalSuspects();
+
+      if (state.clueIndex < PHASE3_CLUES.length - 1) {
+        state.waitingForNextClue = true;
+        const revealBtn = document.getElementById("btn-reveal-clue");
+        revealBtn.style.display = "inline-flex";
+        revealBtn.innerHTML = `<span>🔎</span> REVEAL NEXT CLUE (#${state.clueIndex + 2})`;
+      } else {
+        state.readyToArrest = true;
+        document.getElementById("active-clue-box").innerHTML = highlightVocab(
+          "All 3 forensic clues match ONE suspect: blonde hair, black glasses, and a wrist tattoo!"
+        );
+        document.getElementById("phase3-arrest-bar").classList.add("visible");
+      }
+    }
+
+    function revealNextClue() {
+      SoundEngine.paperFlip();
+      state.clueIndex++;
+      state.waitingForNextClue = false;
+      document.getElementById("btn-reveal-clue").style.display = "none";
+      document.getElementById("phase3-feedback").className = "feedback-banner";
+      showCurrentClue();
+    }
+
+    function triggerArrestViper() {
+      SoundEngine.chime();
+      const viper = AGENTS.find(a => a.id === "viper");
+      document.getElementById("victory-portrait").innerHTML = createAgentPortraitHTML(viper);
+      transitionToScreen("screen-victory", "Case Closed!", "ARRESTING AGENT VIPER...");
+    }
+
+    /* =====================================================================
+       10. MODALS & FLOATING VOCABULARY TOOLTIP
+       ===================================================================== */
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add("open");
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("open");
+    }
+
+    const tooltipEl = document.getElementById("vocab-tooltip");
+    const ttWordEl = document.getElementById("tt-word");
+    const ttDefEl = document.getElementById("tt-def");
+
+    function showTooltip(target) {
+      const def = target.getAttribute("data-def");
+      const word = target.getAttribute("data-word") || target.textContent;
+      if (!def) return;
+
+      ttWordEl.textContent = word;
+      ttDefEl.textContent = def;
+      tooltipEl.classList.add("visible");
+
+      const rect = target.getBoundingClientRect();
+      const ttRect = tooltipEl.getBoundingClientRect();
+      let left = rect.left + rect.width / 2 - ttRect.width / 2;
+      left = Math.max(10, Math.min(left, window.innerWidth - ttRect.width - 10));
+
+      let top = rect.top - ttRect.height - 10;
+      if (top < 10) top = rect.bottom + 10;
+
+      tooltipEl.style.left = `${left}px`;
+      tooltipEl.style.top = `${top}px`;
+    }
+
+    function hideTooltip() {
+      tooltipEl.classList.remove("visible");
+    }
+
+    document.addEventListener("mouseover", e => {
+      const vw = e.target.closest(".vocab-word");
+      if (vw) showTooltip(vw);
+    });
+    document.addEventListener("mouseout", e => {
+      if (e.target.closest(".vocab-word")) hideTooltip();
+    });
+    document.addEventListener("focusin", e => {
+      const vw = e.target.closest(".vocab-word");
+      if (vw) showTooltip(vw);
+    });
+    document.addEventListener("focusout", e => {
+      if (e.target.closest(".vocab-word")) hideTooltip();
+    });
+
+    /* =====================================================================
+       11. RESET & EVENT LISTENERS
+       ===================================================================== */
+    function resetGame() {
+      clearInterval(state.typingTimer);
+      state = {
+        readIds: new Set(),
+        selectMode: false,
+        selectedSuspects: new Set(),
+        interrogationIndex: 0,
+        typingTimer: null,
+        isTyping: false,
+        interrogationAnswered: false,
+        clueIndex: 0,
+        waitingForNextClue: false,
+        eliminatedIds: new Set(),
+        readyToArrest: false
+      };
+      hidePhase1Feedback();
+      transitionToScreen("screen-intro", "Briefing", "RESETTING CASE FILE #007...");
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initIntroAndModals();
+
+      // Top bar utility buttons
+      document.getElementById("btn-open-vocab").addEventListener("click", () => {
+        SoundEngine.paperFlip();
+        openModal("modal-vocab");
+      });
+      document.getElementById("btn-open-grammar").addEventListener("click", () => {
+        SoundEngine.paperFlip();
+        openModal("modal-grammar");
+      });
+      document.getElementById("btn-toggle-sound").addEventListener("click", () => {
+        SoundEngine.enabled = !SoundEngine.enabled;
+        document.getElementById("sound-icon").textContent = SoundEngine.enabled ? "🔊" : "🔇";
+        document.getElementById("sound-label").textContent = SoundEngine.enabled ? "SOUND ON" : "SOUND OFF";
+        document.getElementById("btn-toggle-sound").setAttribute("aria-pressed", String(SoundEngine.enabled));
+        if (SoundEngine.enabled) SoundEngine.chime();
+      });
+
+      // Modal close buttons & backdrop click
+      document.querySelectorAll("[data-close-modal]").forEach(btn => {
+        btn.addEventListener("click", () => closeModal(btn.getAttribute("data-close-modal")));
+      });
+      document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+        backdrop.addEventListener("click", e => {
+          if (e.target === backdrop) backdrop.classList.remove("open");
+        });
+      });
+
+      // Stage 0 -> Stage 1
+      document.getElementById("btn-start-game").addEventListener("click", () => {
+        transitionToScreen("screen-phase1", "Phase 1: Dossiers", "OPENING DETECTIVE'S NOTEBOOK...", () => {
+          renderPhase1();
+        });
+      });
+
+      // Stage 1: Agent grid clicks
+      document.getElementById("agents-grid").addEventListener("click", e => {
+        const peekBtn = e.target.closest("[data-peek]");
+        if (peekBtn) {
+          e.stopPropagation();
+          openDossierModal(peekBtn.getAttribute("data-peek"));
+          return;
+        }
+        const card = e.target.closest(".agent-card");
+        if (!card) return;
+        const agentId = card.getAttribute("data-agent-id");
+
+        if (!state.selectMode) {
+          openDossierModal(agentId);
+        } else {
+          SoundEngine.stampThud();
+          if (state.selectedSuspects.has(agentId)) {
+            state.selectedSuspects.delete(agentId);
+          } else {
+            state.selectedSuspects.add(agentId);
+          }
+          hidePhase1Feedback();
+          renderPhase1();
+        }
+      });
+
+      // Stage 1: Toggle Selection Mode
+      document.getElementById("btn-toggle-select-mode").addEventListener("click", () => {
+        SoundEngine.paperFlip();
+        if (!state.selectMode && state.readIds.size < 10) {
+          showPhase1Feedback(
+            "info",
+            `<strong>Detective Tip:</strong> You have read <strong>${state.readIds.size} of 10</strong> dossiers. You can mark suspects now, or click "Read Dossier" on any card to check their alibi!`
+          );
+        } else {
+          hidePhase1Feedback();
+        }
+        state.selectMode = !state.selectMode;
+        renderPhase1();
+      });
+
+      // Stage 1: Hint button
+      document.getElementById("btn-phase1-hint").addEventListener("click", () => {
+        SoundEngine.paperFlip();
+        showPhase1Feedback(
+          "info",
+          "<strong>Detective Hint:</strong> 4 agents have verified proof (Berlin video call logs, street surveillance cameras, London flight tickets, signed hospital report). That leaves <strong>6 suspects</strong> with weak or unverified alibis!"
+        );
+      });
+
+      // Dossier portrait click -> Photo Zoom Modal
+      document.getElementById("dossier-modal-portrait").addEventListener("click", () => {
+        const id = document.getElementById("dossier-modal-portrait").dataset.agentId;
+        if (id) openPhotoZoomModal(id);
+      });
+
+      // Stage 1: Proceed to Interrogation
+      document.getElementById("btn-confirm-suspects").addEventListener("click", checkPhase1Selection);
+
+      // Stage 2: Skip typing (button or clicking speech panel)
+      document.getElementById("btn-skip-typing").addEventListener("click", e => {
+        e.stopPropagation();
+        const agent = AGENTS.find(a => a.id === INTERROGATION_ORDER[state.interrogationIndex]);
+        if (agent && state.isTyping) finishTypewriter(agent.statement);
+      });
+      document.getElementById("speech-panel").addEventListener("click", e => {
+        if (e.target.closest(".vocab-word")) return;
+        const agent = AGENTS.find(a => a.id === INTERROGATION_ORDER[state.interrogationIndex]);
+        if (agent && state.isTyping) finishTypewriter(agent.statement);
+      });
+
+      // Stage 2: Truth / Lie / Next Suspect
+      document.getElementById("btn-truth").addEventListener("click", () => handleInterrogationChoice(false));
+      document.getElementById("btn-lie").addEventListener("click", () => handleInterrogationChoice(true));
+      document.getElementById("btn-next-suspect").addEventListener("click", () => {
+        if (state.interrogationIndex < INTERROGATION_ORDER.length - 1) {
+          SoundEngine.paperFlip();
+          state.interrogationIndex++;
+          loadInterrogationSuspect();
+        } else {
+          transitionToScreen("screen-phase3", "Phase 3: Final Deduction", "LOADING FORENSIC EVIDENCE...", () => {
+            initPhase3();
+          });
+        }
+      });
+
+      // Stage 3: Reveal Next Clue, Arrest Button, and Final Suspect Cards
+      document.getElementById("btn-reveal-clue").addEventListener("click", revealNextClue);
+      document.getElementById("btn-arrest-viper").addEventListener("click", triggerArrestViper);
+      document.getElementById("final-suspects-grid").addEventListener("click", e => {
+        const card = e.target.closest(".evidence-card");
+        if (!card) return;
+        handleFinalSuspectClick(card.getAttribute("data-final-id"));
+      });
+
+      // Stage 4: Play Again
+      document.getElementById("btn-play-again").addEventListener("click", resetGame);
+    });
+  </script>
+</body>
+</html>
